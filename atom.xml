@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>StroyTiger的blogs</title>
+  
+  <subtitle>过去、现在、未来......</subtitle>
+  <link href="http://storytiger.github.io/atom.xml" rel="self"/>
+  
+  <link href="http://storytiger.github.io/"/>
+  <updated>2022-06-29T10:08:20.565Z</updated>
+  <id>http://storytiger.github.io/</id>
+  
+  <author>
+    <name>Tiger Bob</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>nw.js的坑(二)：使用nw_gyp编译native modules包</title>
+    <link href="http://storytiger.github.io/2022/05/16/16/15/14/"/>
+    <id>http://storytiger.github.io/2022/05/16/16/15/14/</id>
+    <published>2022-05-16T08:15:14.000Z</published>
+    <updated>2022-06-29T10:08:20.565Z</updated>
+    
+    <content type="html"><![CDATA[<p>在nw.js中如果使用到npm的native modules包，有时会报错，这时需要使用nw_gyp（<a href="https://github.com/nwjs/nw-gyp%EF%BC%89%E7%BC%96%E8%AF%91%E4%B8%80%E4%B8%8Bnpm">https://github.com/nwjs/nw-gyp）编译一下npm</a> install安装后的包。<br>但nw.js又有一些使用前提，之一是需要python2.7版本。而python2.7版本由于自身的一个bug，如按照nw_gyp的文档，在命令行中指定python2.7的可执行文件参数（nw-gyp –python &#x2F;path&#x2F;to&#x2F;python2.7），或设置环境变量（npm config set python &#x2F;path&#x2F;to&#x2F;executable&#x2F;python2.7），都无法让nw_gyp成功运行。这时，要按如下方法设置，则可以让nw_gyp命令正确执行：<br>环境：</p><ul><li>os: linuxmint 20.3  </li><li>python2(&#x2F;usr&#x2F;bin&#x2F;python2) –version: Python 2.7.18</li></ul><p>技巧：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir ~/bin</span><br><span class="line">$ ln -s /usr/bin/python2 ~/bin/python</span><br><span class="line">$ ln -s /usr/bin/python2-config ~/bin/python-config</span><br></pre></td></tr></table></figure><p>编译命令，以better-sqlite3包为例：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/xxx-prj/node_modules/better-sqlite3</span><br><span class="line">$ nw-gyp rebuild --target=0.62.2</span><br><span class="line">...</span><br></pre></td></tr></table></figure><p>（--target&#x3D;0.62.2是当前项目使用的nw.js版本）。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在nw.js中如果使用到npm的native modules包，有时会报错，这时需要使用nw_gyp（&lt;a href=&quot;https://github.com/nwjs/nw-gyp%EF%BC%89%E7%BC%96%E8%AF%91%E4%B8%80%E4%B8%8Bnp</summary>
+      
+    
+    
+    
+    
+    <category term="nw.js" scheme="http://storytiger.github.io/tags/nw-js/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>安装nvidia显卡的用于tensor flow深度学习的驱动</title>
+    <link href="http://storytiger.github.io/2022/05/12/15/46/25/"/>
+    <id>http://storytiger.github.io/2022/05/12/15/46/25/</id>
+    <published>2022-05-12T07:46:25.000Z</published>
+    <updated>2022-06-29T10:08:20.565Z</updated>
+    
+    <content type="html"><![CDATA[<p>在用tensor flow进行深度学习的计算时，安装nvidia显卡的驱动后可大大提高运算速度。<br>安装过程总结如下：<br>环境：</p><ul><li>linuxmint-20.3</li><li>显卡为NVIDIA GeForce GTX 1050 Ti<br>过程：<br>1、在线安装nvidia的cuda驱动:<br>先在 <em>&#x2F;etc&#x2F;hosts</em> 文件中增加developer.download.nvidia.com和developer.download.nvidia.cn的ip，并保证都能ping通（需要科学上网），否则安装无法进行下去。再：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin</span><br><span class="line">sudo <span class="built_in">mv</span> cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600</span><br><span class="line">sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub</span><br><span class="line">sudo add-apt-repository <span class="string">&quot;deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /&quot;</span></span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get -y install cuda</span><br><span class="line">````</span><br><span class="line">2、离线安装nvidia的cudnn8驱动：  </span><br><span class="line">先在apt的software <span class="built_in">source</span>中注释掉上一步加进来的nvidia的源（不会请百度）再：</span><br><span class="line">到nvidia的官方网站下按照说明一步步进行（需要注册），最后找到并下载 *cudnn-local-repo-ubuntu2004-8.4.0.27_1.0-1_amd64.deb* 包，然后：</span><br><span class="line">```bash</span><br><span class="line">sudo dpkg -i cudnn-local-repo-ubuntu2004-8.4.0.27_1.0-1_amd64.deb</span><br><span class="line">sudo apt-key add /var/cudnn-local-repo-ubuntu2004-8.4.0.27/7fa2af80.pub</span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt install libcudnn8</span><br><span class="line">sudo apt install libcudnn8-dev</span><br><span class="line">sudo apt install libcudnn8-samples</span><br></pre></td></tr></table></figure>3、验证<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install libfreeimage-dev</span><br><span class="line"><span class="built_in">cd</span> /usr/src</span><br><span class="line"><span class="built_in">cp</span> cudnn_samples_v8/ ~/</span><br><span class="line"><span class="built_in">cd</span> ~/cudnn_samples_v8/mnistCUDNN/</span><br><span class="line">make clean &amp;&amp; make</span><br><span class="line">./mnistCUDNN </span><br></pre></td></tr></table></figure>如果最后出现 <em>….print:…Test passed!</em> 表示整个安装过程成功。</li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在用tensor flow进行深度学习的计算时，安装nvidia显卡的驱动后可大大提高运算速度。&lt;br&gt;安装过程总结如下：&lt;br&gt;环境：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;linuxmint-20.3&lt;/li&gt;
+&lt;li&gt;显卡为NVIDIA GeForce GTX 1050 Ti&lt;b</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>nw.js的坑(一)：安装nw.js的sdk版本</title>
+    <link href="http://storytiger.github.io/2022/05/10/15/54/14/"/>
+    <id>http://storytiger.github.io/2022/05/10/15/54/14/</id>
+    <published>2022-05-10T07:54:14.000Z</published>
+    <updated>2022-06-29T10:08:20.565Z</updated>
+    
+    <content type="html"><![CDATA[<p>在做nw.js项目开发时可以不用全局安装nw.js，而是只安装在当前项目目录下，<em>package.json</em>文件写法如下:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="string">&quot;devDependencies&quot;</span>: &#123;</span><br><span class="line">  <span class="string">&quot;nw&quot;</span>: <span class="string">&quot;^x.xx.x&quot;</span>,</span><br><span class="line">  <span class="string">&quot;nw-builder&quot;</span>: <span class="string">&quot;^x.x.x&quot;</span></span><br><span class="line">&#125;,</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure><p>执行nw命令：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$./node_nodules/.bin/nw </span><br></pre></td></tr></table></figure><p>如果还需要安装nw.js的sdk版本用于开发调试，经试验，只有在 <em>~&#x2F;.npmrc</em> 文件中增加:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nwjs_build_type=sdk</span><br></pre></td></tr></table></figure><p>能确保安装的是nw.js的sdk版本，其它的如“npm install nw@{x.xx.x}-sdk”的方式则不一定有效。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在做nw.js项目开发时可以不用全局安装nw.js，而是只安装在当前项目目录下，&lt;em&gt;package.json&lt;/em&gt;文件写法如下:&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pr</summary>
+      
+    
+    
+    
+    
+    <category term="nw.js" scheme="http://storytiger.github.io/tags/nw-js/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>为hexo-next主题增加rss支持</title>
+    <link href="http://storytiger.github.io/2021/01/15/20/41/08/"/>
+    <id>http://storytiger.github.io/2021/01/15/20/41/08/</id>
+    <published>2021-01-15T12:41:08.000Z</published>
+    <updated>2022-06-29T10:08:20.565Z</updated>
+    
+    <content type="html"><![CDATA[<p>环境：</p><ul><li>hexo: 6.2.0  </li><li>next: 8.11.1<br>步骤：</li></ul><ol><li>在站点根目录下先安装hexo-generator-feed：  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-generator-feed</span><br></pre></td></tr></table></figure></li><li>站点根目录下的配置文件 <em>_config.yml</em> 不需要做任何改动，即不需要按照hexo-generator-feed的官方文档中的说明去做更改；</li><li>在next主题的配置文件 <em>_config.next.yml</em> 中，找到 <em>“#RSS: &#x2F;atom.xml || rss”</em> 一行，去掉前边的注释即可。这时，RSS显示在篇文章的最下边，如果想让它显示在侧边栏，则只需这一行移到到siebar-&gt;social下，例如：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">social:</span><br><span class="line">  GitHub: https://github.com/yourname || fab fa-github</span><br><span class="line">  ...</span><br><span class="line">  Rss: /atom.xml || fa fa-rss</span><br></pre></td></tr></table></figure></li></ol>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;环境：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;hexo: 6.2.0  &lt;/li&gt;
+&lt;li&gt;next: 8.11.1&lt;br&gt;步骤：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;在站点根目录下先安装hexo-generator-feed：  &lt;figure class=&quot;highlight </summary>
+      
+    
+    
+    
+    
+    <category term="hexo" scheme="http://storytiger.github.io/tags/hexo/"/>
+    
+  </entry>
+  
+</feed>
